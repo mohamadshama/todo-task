@@ -5,7 +5,7 @@ import TodoItem from "../components/todo-item/TodoItem";
 
 
 const options = [
-  {value: 'all', label: "All"},
+  {value: 'All', label: "All"},
   {value: 'HTML', label: "HTML"},
   {value: 'CSS', label: "CSS"},
   {value: 'JavaScript', label: "JavaScript"},
@@ -13,19 +13,22 @@ const options = [
   {value: 'React', label: "React"},
 ]
 
+
+
 const Home = () => {
 
-  const [items, setItems] = useState<{id: string; task: string; isDone: boolean}[]>([]);
+  const [items, setItems] = useState<{id: string; task: string; type: string; isDone: boolean}[]>([]);
+  const [type, setType] = useState<string>('All');
 
   const handleSubmit = (event: any) => {
     event.preventDefault();
-    console.log("Event: ", event.target[0].value);
     setItems([
       ...items,
       {
         id: `${event.target[0].value + Math.random()}`,
         task: event.target[0].value,
-        isDone: false
+        isDone: false,
+        type: type
       }
     ])
   }
@@ -38,7 +41,9 @@ const Home = () => {
           <div className="flex mt-8 space-x-2">
             
           <AddToDoField />
-          <Dropdown name='tasks-types' options={options} />
+          <Dropdown onChange={(event) => {
+            setType(event.target.value);
+          }} value={type} name='tasks-types' options={options} />
 
           </div>
           
@@ -46,10 +51,13 @@ const Home = () => {
 
         <div className="w-full mt-8 flex flex-col items-center	">
           {
-            items.map((item) => <TodoItem onComplete={(id: string) => {
-              console.log('ID: ', id);
+            items.filter((item) => {
+              console.log('Item.type', item.type);
+              console.log('type', type);
+              if (type == 'All') return true;
+              else return item.type == type;
+            }).map((item) => <TodoItem onComplete={(id: string) => {
               setItems(items.map((item) => {
-                console.log('Item.id', item.id);
                 if (item.id == id) return {...item, isDone: true}
                 else return item;
               }));
@@ -57,7 +65,7 @@ const Home = () => {
               setItems(items.filter((item) => {
                 return item.id != id;
               }))
-              }} key={item.task} text={item.task} isDone={item.isDone} id={item.id} />)
+              }} key={item.id} text={item.task} isDone={item.isDone} id={item.id} />)
           }
         </div>
       </div>
