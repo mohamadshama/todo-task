@@ -52,8 +52,6 @@ const Home = () => {
         <div className="w-full mt-8 flex flex-col items-center	">
           {
             items.filter((item) => {
-              console.log('Item.type', item.type);
-              console.log('type', type);
               if (type == 'All') return true;
               else return item.type == type;
             }).map((item) => <TodoItem onComplete={(id: string) => {
